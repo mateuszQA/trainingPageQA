@@ -120,6 +120,13 @@
             margin: 60px 0;
         }
 
+        /* BUG: Feature cards break on very small screens */
+        @media (max-width: 320px) {
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Should be smaller, like 280px */
+            }
+        }
+
         .feature-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -360,7 +367,7 @@
         }
 
         .footer-text-area a {
-            color: #000; /* Invisible on dark background */
+            color: #5b3f81; /* Invisible on dark background */
             text-decoration: none;
             margin: 0 10px;
         }
@@ -459,7 +466,7 @@
 
         <section class="search-bar">
             <h2 style="color: white; margin-bottom: 20px;">🔍 Search Music</h2>
-            <input type="text" class="search-input" placeholder="Search for songs, artists, albums..." id="searchInput">
+            <input type="text" class="search-input" placeholder="Search for jazz, pop, metal, rock" id="searchInput">
             <div class="search-results" id="searchResults"></div>
         </section>
 
@@ -526,7 +533,7 @@
                 <h4>Jazz Evening</h4>
             </div>
             <div class="gallery-item">
-                <img src="nonexistent-image3.jpg" alt="Concert 3" onerror="this.style.background='#666'; this.alt='❌ Image not found';">
+                <img src="nonexistent-image3.jpg" alt="Concert 3" onerror="this.style.background='#666'; this.alt='nonexistent-image3.jp';">
                 <h4>Pop Festival</h4>
             </div>
         </section>
@@ -673,27 +680,80 @@
             // Missing logic to actually enable the button
         }
 
-        // BUG 8: Search functionality returns JSON data but always same results
+        // BUG 8: Search functionality returns JSON data but with mixed behavior
         document.getElementById('searchInput').addEventListener('input', function(e) {
-            const query = e.target.value;
+            const query = e.target.value.toLowerCase();
             const resultsDiv = document.getElementById('searchResults');
             
             if (query.length > 2) {
-                // BUG: Always returns the same JSON results regardless of search query
-                const fakeResults = [
-                    {"id": 1, "title": "Song One", "artist": "Artist A", "album": "Album X"},
-                    {"id": 2, "title": "Song Two", "artist": "Artist B", "album": "Album Y"},
-                    {"id": 3, "title": "Song Three", "artist": "Artist C", "album": "Album Z"}
-                ];
-                
-                let resultsHTML = '<h4>Search Results (JSON format):</h4>';
-                fakeResults.forEach(result => {
-                    resultsHTML += `<div class="search-result-item">
-                        <strong>${result.title}</strong> by ${result.artist}<br>
-                        <small>Album: ${result.album} | ID: ${result.id}</small>
-                    </div>`;
-                });
-                resultsDiv.innerHTML = resultsHTML;
+                if (query.includes('rock')) {
+                    // Only "rock" searches work properly, shows raw JSON
+                    const rockResults = [
+                        {"id": 1, "title": "Bohemian Rhapsody", "artist": "Queen", "album": "A Night at the Opera", "genre": "rock"},
+                        {"id": 2, "title": "Stairway to Heaven", "artist": "Led Zeppelin", "album": "Led Zeppelin IV", "genre": "rock"},
+                        {"id": 3, "title": "Sweet Child O' Mine", "artist": "Guns N' Roses", "album": "Appetite for Destruction", "genre": "rock"},
+                        {"id": 4, "title": "Hotel California", "artist": "Eagles", "album": "Hotel California", "genre": "rock"}
+                    ];
+                    
+                    resultsDiv.innerHTML = '<pre style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; color: #00ff00; font-family: monospace; overflow-x: auto;">' + 
+                                         JSON.stringify(rockResults, null, 2) + '</pre>';
+                } else if (query.includes('jazz')) {
+                    // Jazz returns different amount (6 results) in formatted HTML
+                    const jazzResults = [
+                        {"id": 101, "title": "Take Five", "artist": "Dave Brubeck", "album": "Time Out", "genre": "jazz"},
+                        {"id": 102, "title": "Kind of Blue", "artist": "Miles Davis", "album": "Kind of Blue", "genre": "jazz"},
+                        {"id": 103, "title": "A Love Supreme", "artist": "John Coltrane", "album": "A Love Supreme", "genre": "jazz"},
+                        {"id": 104, "title": "Summertime", "artist": "Ella Fitzgerald", "album": "Porgy and Bess", "genre": "jazz"},
+                        {"id": 105, "title": "Blue Moon", "artist": "Billie Holiday", "album": "Lady in Satin", "genre": "jazz"},
+                        {"id": 106, "title": "Fly Me to the Moon", "artist": "Frank Sinatra", "album": "It Might as Well Be Swing", "genre": "jazz"}
+                    ];
+                    
+                    let resultsHTML = '';
+                    jazzResults.forEach(result => {
+                        resultsHTML += `<div class="search-result-item">
+                            <strong>${result.title}</strong> by ${result.artist}<br>
+                            <small>Album: ${result.album} | ID: ${result.id}</small>
+                        </div>`;
+                    });
+                    resultsDiv.innerHTML = resultsHTML;
+                } else if (query.includes('pop')) {
+                    // Pop returns different amount (3 results) in formatted HTML  
+                    const popResults = [
+                        {"id": 201, "title": "Billie Jean", "artist": "Michael Jackson", "album": "Thriller", "genre": "pop"},
+                        {"id": 202, "title": "Like a Virgin", "artist": "Madonna", "album": "Like a Virgin", "genre": "pop"},
+                        {"id": 203, "title": "I Want It That Way", "artist": "Backstreet Boys", "album": "Millennium", "genre": "pop"}
+                    ];
+                    
+                    let resultsHTML = '';
+                    popResults.forEach(result => {
+                        resultsHTML += `<div class="search-result-item">
+                            <strong>${result.title}</strong> by ${result.artist}<br>
+                            <small>Album: ${result.album} | ID: ${result.id}</small>
+                        </div>`;
+                    });
+                    resultsDiv.innerHTML = resultsHTML;
+                } else if (query.includes('metal')) {
+                    // Metal returns different amount (5 results) in formatted HTML
+                    const metalResults = [
+                        {"id": 301, "title": "Master of Puppets", "artist": "Metallica", "album": "Master of Puppets", "genre": "metal"},
+                        {"id": 302, "title": "Paranoid", "artist": "Black Sabbath", "album": "Paranoid", "genre": "metal"},
+                        {"id": 303, "title": "Run to the Hills", "artist": "Iron Maiden", "album": "The Number of the Beast", "genre": "metal"},
+                        {"id": 304, "title": "Breaking the Law", "artist": "Judas Priest", "album": "British Steel", "genre": "metal"},
+                        {"id": 305, "title": "Holy Diver", "artist": "Dio", "album": "Holy Diver", "genre": "metal"}
+                    ];
+                    
+                    let resultsHTML = '';
+                    metalResults.forEach(result => {
+                        resultsHTML += `<div class="search-result-item">
+                            <strong>${result.title}</strong> by ${result.artist}<br>
+                            <small>Album: ${result.album} | ID: ${result.id}</small>
+                        </div>`;
+                    });
+                    resultsDiv.innerHTML = resultsHTML;
+                } else {
+                    // All other searches return empty results
+                    resultsDiv.innerHTML = '';
+                }
             } else {
                 resultsDiv.innerHTML = '';
             }

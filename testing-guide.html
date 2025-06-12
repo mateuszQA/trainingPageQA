@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Testing Theory Guide - Everything You Need to Know</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .theory-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .theory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .card-content {
+            font-size: 1.1em;
+            color: #444;
+        }
+
+        .subsection {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .subsection h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .example-title {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: #ffd700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tool-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tool-name {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .device-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .device-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .quick-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            max-width: 200px;
+        }
+
+        .quick-nav h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .quick-nav a {
+            display: block;
+            color: #667eea;
+            text-decoration: none;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quick-nav a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            padding-left: 10px;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-nav {
+                display: none;
+            }
+            
+            .step-list li {
+                padding-left: 50px;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-top: 60px;
+            background: rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="quick-nav">
+        <h4>Quick Navigation</h4>
+        <a href="#favicon">Favicon</a>
+        <a href="#responsiveness">Responsiveness</a>
+        <a href="#validation">Validation</a>
+        <a href="#accessibility">Accessibility</a>
+        <a href="#modal-testing">Modal Testing</a>
+        <a href="#form-testing">Form Testing</a>
+        <a href="#audio-testing">Audio Testing</a>
+        <a href="#image-testing">Image Testing</a>
+        <a href="#search-testing">Search Testing</a>
+        <a href="#tools">Testing Tools</a>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>🎯 QA Testing Theory Guide</h1>
+            <p>Master all the concepts you need to become a professional QA tester. From basic definitions to advanced techniques.</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Favicon Card -->
+            <div class="theory-card" id="favicon">
+                <div class="card-icon">🔖</div>
+                <h2 class="card-title">What is a Favicon?</h2>
+                <div class="card-content">
+                    <p>A <span class="highlight">favicon</span> (favorite icon) is a small 16x16 or 32x32 pixel icon that represents your website in browser tabs, bookmarks, and address bars.</p>
+                    
+                    <div class="subsection">
+                        <h3>Why Favicons Matter</h3>
+                        <ul>
+                            <li><strong>Brand Recognition:</strong> Users instantly recognize your site</li>
+                            <li><strong>Professional Appearance:</strong> Shows attention to detail</li>
+                            <li><strong>User Experience:</strong> Easier to find among multiple tabs</li>
+                            <li><strong>SEO Benefits:</strong> Search engines consider it a quality signal</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">How to Add a Favicon:</div>
+                        <div class="code-block">&lt;link rel="icon" type="image/x-icon" href="/favicon.ico"&gt;</div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Favicon</h3>
+                        <ol class="step-list">
+                            <li>Look at the browser tab - check if there's a custom icon</li>
+                            <li>Bookmark the page (Ctrl+D) and check bookmark icon</li>
+                            <li>Check browser history for the icon</li>
+                            <li>Compare with professional websites like Google, Facebook</li>
+                        </ol>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Common Issue:</strong> Missing favicon shows browser's default icon or blank space, making the site look unprofessional.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsiveness Card -->
+            <div class="theory-card" id="responsiveness">
+                <div class="card-icon">📱</div>
+                <h2 class="card-title">Responsive Design Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Responsive design</span> ensures websites work perfectly on all device sizes - from phones to desktops.</p>
+                    
+                    <div class="subsection">
+                        <h3>Why Responsiveness Matters</h3>
+                        <ul>
+                            <li><strong>Mobile-First World:</strong> 60%+ users browse on mobile</li>
+                            <li><strong>Google Ranking:</strong> Mobile-friendly sites rank higher</li>
+                            <li><strong>User Experience:</strong> Users leave if site doesn't work on their device</li>
+                            <li><strong>Business Impact:</strong> Poor mobile experience = lost customers</li>
+                        </ul>
+                    </div>
+
+                    <div class="device-grid">
+                        <div class="device-card">
+                            <div class="device-icon">📱</div>
+                            <strong>Mobile</strong><br>
+                            320px - 768px
+                        </div>
+                        <div class="device-card">
+                            <div class="device-icon">📋</div>
+                            <strong>Tablet</strong><br>
+                            768px - 1024px
+                        </div>
+                        <div class="device-card">
+                            <div class="device-icon">💻</div>
+                            <strong>Desktop</strong><br>
+                            1024px+
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Responsiveness</h3>
+                        <ol class="step-list">
+                            <li>Press F12 to open Developer Tools</li>
+                            <li>Click the mobile/tablet icon (📱) or press Ctrl+Shift+M</li>
+                            <li>Test different screen sizes: iPhone SE (375px), iPad (768px), Desktop (1200px)</li>
+                            <li>Check if text is readable without horizontal scrolling</li>
+                            <li>Verify buttons are tappable (minimum 44px touch target)</li>
+                            <li>Test navigation menus - should collapse to hamburger on mobile</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Common Responsive Issues:</div>
+                        <ul>
+                            <li>Text too small to read on mobile</li>
+                            <li>Buttons too small to tap</li>
+                            <li>Horizontal scrolling required</li>
+                            <li>Navigation menu disappears</li>
+                            <li>Images don't scale properly</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Validation Card -->
+            <div class="theory-card" id="validation">
+                <div class="card-icon">✅</div>
+                <h2 class="card-title">Form Validation Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Form validation</span> ensures users enter correct, safe, and usable data before submitting forms.</p>
+                    
+                    <div class="subsection">
+                        <h3>Types of Validation</h3>
+                        <div class="tool-grid">
+                            <div class="tool-item">
+                                <div class="tool-name">Client-Side</div>
+                                JavaScript validation in browser (instant feedback)
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Server-Side</div>
+                                Backend validation (security & data integrity)
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Real-Time</div>
+                                Validation as user types
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">On Submit</div>
+                                Validation when form is submitted
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>What to Validate</h3>
+                        <ul>
+                            <li><strong>Email Format:</strong> Must contain @ and valid domain</li>
+                            <li><strong>Name Fields:</strong> Should only accept letters, spaces, hyphens</li>
+                            <li><strong>Phone Numbers:</strong> Correct format for country</li>
+                            <li><strong>Passwords:</strong> Minimum length, special characters</li>
+                            <li><strong>Required Fields:</strong> Cannot be empty</li>
+                            <li><strong>Data Types:</strong> Numbers only in numeric fields</li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Validation</h3>
+                        <ol class="step-list">
+                            <li>Try valid data first (happy path testing)</li>
+                            <li>Test invalid email formats: no @, no domain, special characters</li>
+                            <li>Enter numbers in name fields: "12345" or "John123"</li>
+                            <li>Leave required fields empty and try to submit</li>
+                            <li>Enter extremely long text to test field limits</li>
+                            <li>Try special characters: !@#$%^&*</li>
+                            <li>Test copy-paste from other sources</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Email Validation Testing Examples:</div>
+                        <ul>
+                            <li>✅ Valid: john@company.com, user.name@domain.co.uk</li>
+                            <li>❌ Invalid: @domain.com, user@, user.domain.com</li>
+                            <li>🔍 Edge Cases: user+tag@gmail.com, user-name@example.com</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Security Risk:</strong> Poor validation allows malicious code injection and spam submissions.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accessibility Card -->
+            <div class="theory-card" id="accessibility">
+                <div class="card-icon">♿</div>
+                <h2 class="card-title">Accessibility Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Accessibility (A11y)</span> ensures websites work for users with disabilities - visual, hearing, motor, or cognitive impairments.</p>
+                    
+                    <div class="subsection">
+                        <h3>Why Accessibility Matters</h3>
+                        <ul>
+                            <li><strong>Legal Requirement:</strong> Many countries mandate accessible websites</li>
+                            <li><strong>Market Size:</strong> 15% of global population has disabilities</li>
+                            <li><strong>Better UX:</strong> Accessible design helps everyone</li>
+                            <li><strong>SEO Benefits:</strong> Screen reader optimization helps search engines</li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Key Accessibility Areas</h3>
+                        <div class="tool-grid">
+                            <div class="tool-item">
+                                <div class="tool-name">Color Contrast</div>
+                                Text must be readable against background
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Alt Text</div>
+                                Images need descriptive alternative text
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Keyboard Navigation</div>
+                                All features accessible without mouse
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Screen Readers</div>
+                                Content must be readable by assistive technology
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Accessibility</h3>
+                        <ol class="step-list">
+                            <li>Check color contrast - can you read text clearly?</li>
+                            <li>Navigate using only Tab key (no mouse)</li>
+                            <li>Right-click images → Inspect → check alt="" attributes</li>
+                            <li>Use browser's built-in screen reader</li>
+                            <li>Test with high contrast mode enabled</li>
+                            <li>Zoom to 200% - is content still usable?</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Common Accessibility Issues:</div>
+                        <ul>
+                            <li>White text on yellow background (low contrast)</li>
+                            <li>Images with alt="image.jpg" instead of descriptive text</li>
+                            <li>Links that say "click here" without context</li>
+                            <li>Forms without proper labels</li>
+                            <li>Videos without captions</li>
+                        </ul>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>Pro Tip:</strong> Use browser extensions like WAVE or axe DevTools for automated accessibility scanning.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Testing Card -->
+            <div class="theory-card" id="modal-testing">
+                <div class="card-icon">🪟</div>
+                <h2 class="card-title">Modal & Popup Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Modals</span> are overlay windows that appear on top of the main content. They must be properly implemented to avoid trapping users.</p>
+                    
+                    <div class="subsection">
+                        <h3>Modal UX Best Practices</h3>
+                        <ul>
+                            <li><strong>Easy to Close:</strong> X button, Cancel button, background click</li>
+                            <li><strong>Keyboard Support:</strong> Escape key should close modal</li>
+                            <li><strong>Focus Management:</strong> Focus should move to modal when opened</li>
+                            <li><strong>Screen Reader Support:</strong> Announce modal opening</li>
+                            <li><strong>Mobile Friendly:</strong> Works on touch devices</li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Modals</h3>
+                        <ol class="step-list">
+                            <li>Click the button that opens the modal</li>
+                            <li>Look for X button in top-right corner</li>
+                            <li>Try clicking the X button</li>
+                            <li>Look for Cancel or Close button</li>
+                            <li>Try clicking outside the modal (on dark background)</li>
+                            <li>Press Escape key</li>
+                            <li>Try navigating with Tab key</li>
+                            <li>Test on mobile devices</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Modal Testing Checklist:</div>
+                        <ul>
+                            <li>✅ Modal opens when triggered</li>
+                            <li>✅ Content is readable and properly formatted</li>
+                            <li>✅ X button is visible and working</li>
+                            <li>✅ Action buttons (OK, Cancel) work</li>
+                            <li>✅ Background click closes modal</li>
+                            <li>✅ Escape key closes modal</li>
+                            <li>✅ Modal is responsive on mobile</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Critical Issue:</strong> If users cannot close a modal, they're trapped and must refresh the page - this is a P1 bug!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Testing Card -->
+            <div class="theory-card" id="form-testing">
+                <div class="card-icon">📋</div>
+                <h2 class="card-title">Form Functionality Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Form testing</span> ensures data collection works properly and provides good user feedback throughout the process.</p>
+                    
+                    <div class="subsection">
+                        <h3>Form Components to Test</h3>
+                        <div class="tool-grid">
+                            <div class="tool-item">
+                                <div class="tool-name">Input Fields</div>
+                                Text, email, password, number inputs
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Validation</div>
+                                Real-time and submit-time checks
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Submit Button</div>
+                                Enabled/disabled states
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Error Messages</div>
+                                Clear, helpful feedback
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Form Testing Process</h3>
+                        <ol class="step-list">
+                            <li>Check if all required fields are marked (*)</li>
+                            <li>Fill form with valid data first</li>
+                            <li>Check if submit button becomes enabled</li>
+                            <li>Try submitting - what response do you get?</li>
+                            <li>Test validation by entering invalid data</li>
+                            <li>Leave required fields empty and submit</li>
+                            <li>Check error message clarity and helpfulness</li>
+                            <li>Test form reset functionality</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Common Form Issues:</div>
+                        <ul>
+                            <li>Submit button permanently disabled</li>
+                            <li>No feedback after form submission</li>
+                            <li>Validation errors not user-friendly</li>
+                            <li>Form data lost on page refresh</li>
+                            <li>No loading indicator during submission</li>
+                        </ul>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>Good Practice:</strong> Forms should provide immediate feedback and clear next steps after submission.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audio Testing Card -->
+            <div class="theory-card" id="audio-testing">
+                <div class="card-icon">🔊</div>
+                <h2 class="card-title">Audio & Media Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Audio testing</span> ensures media players work correctly and provide good user control over playback.</p>
+                    
+                    <div class="subsection">
+                        <h3>Audio Player Components</h3>
+                        <ul>
+                            <li><strong>Play/Pause Button:</strong> Controls playback state</li>
+                            <li><strong>Volume Control:</strong> Adjusts audio level</li>
+                            <li><strong>Progress Bar:</strong> Shows playback position</li>
+                            <li><strong>Time Display:</strong> Current/total time</li>
+                            <li><strong>Loading State:</strong> Shows when audio is loading</li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Audio</h3>
+                        <ol class="step-list">
+                            <li>Ensure your computer/device volume is up</li>
+                            <li>Click the play button</li>
+                            <li>Listen for actual audio output</li>
+                            <li>Move the volume slider - does audio get louder/quieter?</li>
+                            <li>Check if play button changes to pause button</li>
+                            <li>Test pause functionality</li>
+                            <li>Try on different browsers and devices</li>
+                            <li>Test with headphones and speakers</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Common Audio Issues:</div>
+                        <ul>
+                            <li>Audio file doesn't exist (404 error)</li>
+                            <li>Volume hardcoded to 0 in JavaScript</li>
+                            <li>Volume slider moves but doesn't control actual volume</li>
+                            <li>Play button works but no sound comes out</li>
+                            <li>Audio format not supported in some browsers</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Testing Environment:</strong> Always test audio in a quiet environment and with known working speakers/headphones.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Testing Card -->
+            <div class="theory-card" id="image-testing">
+                <div class="card-icon">🖼️</div>
+                <h2 class="card-title">Image & Media Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Image testing</span> ensures all visual content loads properly and provides good accessibility through alt text.</p>
+                    
+                    <div class="subsection">
+                        <h3>Image Testing Areas</h3>
+                        <div class="tool-grid">
+                            <div class="tool-item">
+                                <div class="tool-name">Loading</div>
+                                Do images appear correctly?
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Alt Text</div>
+                                Descriptive alternative text
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Responsive</div>
+                                Scale properly on different screens
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Performance</div>
+                                Load quickly without blocking page
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Images</h3>
+                        <ol class="step-list">
+                            <li>Visually scan page for missing/broken images</li>
+                            <li>Look for placeholder icons or "image not found" messages</li>
+                            <li>Right-click images → Inspect Element</li>
+                            <li>Check the src attribute - is the URL correct?</li>
+                            <li>Examine alt attribute - is it descriptive?</li>
+                            <li>Test on slow internet connection</li>
+                            <li>Disable images in browser settings and test alt text</li>
+                            <li>Check image scaling on different screen sizes</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Image Testing Checklist:</div>
+                        <ul>
+                            <li>✅ All images load without errors</li>
+                            <li>✅ Alt text is descriptive, not just filename</li>
+                            <li>✅ Images scale properly on mobile</li>
+                            <li>✅ Broken images have graceful fallbacks</li>
+                            <li>✅ Images don't slow down page loading</li>
+                        </ul>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>Accessibility Tip:</strong> Good alt text describes what the image shows, not just "image" or the filename.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Testing Card -->
+            <div class="theory-card" id="search-testing">
+                <div class="card-icon">🔍</div>
+                <h2 class="card-title">Search Functionality Testing</h2>
+                <div class="card-content">
+                    <p><span class="highlight">Search testing</span> ensures users can find what they're looking for quickly and accurately.</p>
+                    
+                    <div class="subsection">
+                        <h3>Search Components</h3>
+                        <ul>
+                            <li><strong>Search Input:</strong> Where users type queries</li>
+                            <li><strong>Search Button:</strong> Triggers the search</li>
+                            <li><strong>Results Display:</strong> How results are shown</li>
+                            <li><strong>Filtering:</strong> Ways to narrow results</li>
+                            <li><strong>Pagination:</strong> Navigation through result pages</li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>How to Test Search</h3>
+                        <ol class="step-list">
+                            <li>Try common search terms first</li>
+                            <li>Search for content you know exists</li>
+                            <li>Test spelling variations and typos</li>
+                            <li>Try very specific terms</li>
+                            <li>Search for content that doesn't exist</li>
+                            <li>Test empty search (just clicking search button)</li>
+                            <li>Try special characters in search</li>
+                            <li>Test very long search queries</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Search Testing Scenarios:</div>
+                        <ul>
+                            <li>🔍 "rock music" → Should return rock songs</li>
+                            <li>🔍 "jazz" → Should return jazz content</li>
+                            <li>🔍 "beethoven" → Classical music results</li>
+                            <li>🔍 "xyz123" → "No results" message</li>
+                            <li>🔍 "" (empty) → How does it handle no input?</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Common Issues:</strong> Search returns same results for different queries, or shows no results for valid searches.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing Tools Card -->
+            <div class="theory-card" id="tools">
+                <div class="card-icon">🛠️</div>
+                <h2 class="card-title">Essential Testing Tools</h2>
+                <div class="card-content">
+                    <p>Every QA tester needs to master these <span class="highlight">essential tools</span> for effective manual testing.</p>
+                    
+                    <div class="subsection">
+                        <h3>Browser Developer Tools (F12)</h3>
+                        <div class="tool-grid">
+                            <div class="tool-item">
+                                <div class="tool-name">Elements Tab</div>
+                                Inspect HTML/CSS, check alt text
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Console Tab</div>
+                                View JavaScript errors and logs
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Network Tab</div>
+                                Check file loading, API calls
+                            </div>
+                            <div class="tool-item">
+                                <div class="tool-name">Mobile View</div>
+                                Test responsive design
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Keyboard Shortcuts</h3>
+                        <div class="code-block">
+F12 - Open Developer Tools
+Ctrl+Shift+M - Toggle mobile view
+Ctrl+Shift+I - Inspect element
+Ctrl+D - Bookmark page
+Ctrl+R - Refresh page
+Ctrl+Shift+R - Hard refresh (clear cache)
+F5 - Refresh
+Ctrl+U - View page source</div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Testing Browsers</h3>
+                        <ul>
+                            <li><strong>Chrome:</strong> Most popular, best dev tools</li>
+                            <li><strong>Firefox:</strong> Good accessibility tools</li>
+                            <li><strong>Safari:</strong> Test on macOS/iOS</li>
+                            <li><strong>Edge:</strong> Test on Windows</li>
+                            <li><strong>Mobile Browsers:</strong> Test on actual devices</li>
+                        </ul>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>Pro Tip:</strong> Always test in multiple browsers - what works in Chrome might break in Safari!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>🎯 Ready to Test Like a Pro!</h3>
+            <p>You now have all the theoretical knowledge needed to find bugs systematically. Practice on the MusicBox website and become a QA expert!</p>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.quick-nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll highlight to navigation
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.theory-card');
+            const navLinks = document.querySelectorAll('.quick-nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.fontWeight = 'normal';
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.style.fontWeight = 'bold';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

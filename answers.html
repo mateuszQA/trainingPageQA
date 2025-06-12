@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicBox Testing Guide - How to Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide {
+            display: none;
+            padding: 40px;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+        }
+
+        .bug-title {
+            font-size: 1.8em;
+            color: #ffd700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        .testing-steps {
+            text-align: left;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+
+        .step-number {
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        .tools-needed {
+            background: rgba(255,215,0,0.2);
+            border-left: 4px solid #ffd700;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .expected-result {
+            background: rgba(255,107,107,0.2);
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+        }
+
+        .category-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .p1 { background: #ff4757; }
+        .p2 { background: #ff6348; }
+        .p3 { background: #ffa502; }
+        .p4 { background: #2ed573; }
+
+        .keyboard-shortcuts {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.8em; }
+            h3 { font-size: 1.5em; }
+            
+            .step {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="keyboard-shortcuts">
+            ← → Arrow Keys | Space | Enter
+        </div>
+        
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">19</span>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="category-icon">🎵</div>
+                <h1>MusicBox Testing Guide</h1>
+                <h3>How to Test Each Bug</h3>
+                <p style="font-size: 1.3em; margin-top: 30px;">
+                    A step-by-step guide to finding all 18 intentional bugs
+                </p>
+                <p style="font-size: 1.1em; margin-top: 15px; opacity: 0.8;">
+                    Use arrow keys, space, or enter to navigate
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Bug #1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">📱</div>
+                <div class="bug-title">Bug #1: Navigation Menu Disappears on Mobile</div>
+                <div class="priority-badge p2">HIGH Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Open the website on desktop first</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Notice the navigation menu: Home, Music, About, Contact</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Press F12 to open Developer Tools</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Click the mobile/tablet icon or press Ctrl+Shift+M</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Set width to 768px or lower (iPhone, Samsung)</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Menu completely disappears with no hamburger button replacement
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Bug #2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">📏</div>
+                <div class="bug-title">Bug #2: Main Title Not Responsive</div>
+                <div class="priority-badge p4">LOW Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Look at the main title "Welcome to MusicBox!" on desktop</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Switch to mobile view (F12 → mobile icon)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Try different mobile sizes: iPhone SE (375px), iPhone 12 (390px)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Check if the title text is readable and not too big</div>
+                    </div>
+                </div>
+
+                <div class="tools-needed">
+                    <strong>🛠️ Tools needed:</strong> Browser Developer Tools (F12), Mobile view toggle
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Title stays huge on mobile, may cause horizontal scrolling
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Bug #3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">📧</div>
+                <div class="bug-title">Bug #3: Newsletter Layout Breaks on Mobile</div>
+                <div class="priority-badge p4">LOW Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Scroll down to the Newsletter section</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">On desktop: notice email input and Subscribe button side by side</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Switch to mobile view (width < 768px)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Try to type in email field and click Subscribe button</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Check if elements overlap or are hard to tap</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Input and button overlap, difficult to use on mobile
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Bug #4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">❌</div>
+                <div class="bug-title">Bug #4: Contact Form Submit Button Disabled</div>
+                <div class="priority-badge p1">CRITICAL Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Scroll to "Contact Us" section</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Fill in Name field with any text</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Fill in Email field (try: test@example.com)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Fill in Message field with some text</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Try to click "Send Message" button</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Button remains grayed out and unclickable despite valid input
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Bug #5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">⚙️</div>
+                <div class="bug-title">Bug #5: Form Validation Logic Broken</div>
+                <div class="priority-badge p2">HIGH Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Right-click on the page and select "Inspect" or press F12</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Go to Console tab</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Fill the contact form fields one by one</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Watch console for messages like "Form validity checked"</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Notice button never changes color or becomes enabled</div>
+                    </div>
+                </div>
+
+                <div class="tools-needed">
+                    <strong>🛠️ Tools needed:</strong> Browser Console (F12 → Console tab)
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Console shows validation running but button stays disabled
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Bug #6 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">🔇</div>
+                <div class="bug-title">Bug #6: Volume Always Set to Zero</div>
+                <div class="priority-badge p2">HIGH Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Find the "Sample Track" music player section</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Make sure your computer volume is up</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Click the play button (▶️)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Move the volume slider to different positions</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Listen carefully - you should hear nothing</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Play button works (changes to pause) but no sound despite slider position
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Bug #7 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">🖼️</div>
+                <div class="bug-title">Bug #7: Third Gallery Image Fails to Load</div>
+                <div class="priority-badge p3">MEDIUM Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Scroll down to the image gallery section</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Look at all three images: Rock Concert, Jazz Evening, Pop Festival</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Check which images load properly and which don't</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Right-click on broken image → Inspect Element</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Check the src attribute in HTML</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> First two images load, third shows error or gray placeholder
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Bug #8 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">♿</div>
+                <div class="bug-title">Bug #8: Incorrect Alt Text for Broken Image</div>
+                <div class="priority-badge p3">MEDIUM Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Find the broken image (Pop Festival)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Right-click on it → Inspect Element</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Look at the alt="" attribute in the HTML</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Compare with alt text of working images</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Test with screen reader if possible</div>
+                    </div>
+                </div>
+
+                <div class="tools-needed">
+                    <strong>🛠️ Tools needed:</strong> Browser Inspector, Screen reader (optional)
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Alt text shows filename instead of descriptive text
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Bug #9 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">👻</div>
+                <div class="bug-title">Bug #9: Footer Links Invisible</div>
+                <div class="priority-badge p3">MEDIUM Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Scroll to the bottom of the page</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Look for footer links (Privacy Policy, Terms of Service, Help)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Try to see the text - is it visible?</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Try hovering over where links should be</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Try selecting text in footer area</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Links exist but are invisible due to low contrast color text on dark background
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Bug #10 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">🔍</div>
+                <div class="bug-title">Bug #10: Inconsistent Search Result Formats</div>
+                <div class="priority-badge p3">MEDIUM Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Find the "Search Music" section</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Search for "rock" - notice the green code block format</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Clear search and type "jazz" - notice card format</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Try "pop" and "metal" searches</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Compare the visual presentation of results</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Rock shows technical JSON, others show user-friendly cards
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Bug #11 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">📧</div>
+                <div class="bug-title">Bug #11: Email Validation Too Restrictive</div>
+                <div class="priority-badge p2">HIGH Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Go to Contact form email field</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Try these valid emails one by one:</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">• user.name@example.com (with dot)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">• test+tag@gmail.com (with plus)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">• admin@example.co.uk (subdomain)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-text">Click outside field after each one - watch for red background</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Valid emails show red background and error message
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Bug #12 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">🔤</div>
+                <div class="bug-title">Bug #12: No Name Field Validation</div>
+                <div class="priority-badge p3">MEDIUM Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Go to the Contact form Name field</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Try entering numbers: "12345"</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Try special characters: "!@#$%"</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Try mixed input: "John123!@#"</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Check if any validation errors appear</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-text">Try submitting form with "12345" as name</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Name field accepts numbers, symbols, and invalid characters without validation
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Bug #13 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">🔒</div>
+                <div class="bug-title">Bug #13: Modal Cannot Be Closed</div>
+                <div class="priority-badge p1">CRITICAL Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Click "Start Your Journey" button</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Modal popup appears - now try to close it</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Look for X button in top-right corner</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Try clicking the "Close" button</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Try clicking outside the modal (dark area)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-text">Try pressing Escape key</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> None of the usual close methods work - you're trapped!
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Bug #14-16 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">❌</div>
+                <div class="bug-title">Bugs #14-16: Modal Close Issues (Detailed)</div>
+                <div class="priority-badge p1">CRITICAL Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text"><strong>Hidden X Button:</strong> Right-click near top-right, inspect HTML</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Look for class="close-modal" in code - check CSS display property</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text"><strong>Disabled Close Button:</strong> Notice gray color and "not-allowed" cursor</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text"><strong>Background Click:</strong> Open Console (F12), click dark area</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Look for console message about background click</div>
+                    </div>
+                </div>
+
+                <div class="tools-needed">
+                    <strong>🛠️ Tools needed:</strong> Browser Inspector, Console tab
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> X is hidden, button disabled, background click only logs message
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Bug #17 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">📋</div>
+                <div class="bug-title">Bug #17: Contact Form Always Shows Error</div>
+                <div class="priority-badge p2">HIGH Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Fill out the contact form completely (Name, Email, Message)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Use simple email like test@test.com to avoid validation issues</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Even though button is disabled, try pressing Enter key</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">OR inspect button and remove "disabled" attribute temporarily</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Try to submit and see what message appears</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Always shows "form currently unavailable" message
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Bug #18 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">🔖</div>
+                <div class="bug-title">Bug #18: Missing Favicon</div>
+                <div class="priority-badge p4">LOW Priority</div>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Look at your browser tab while on the MusicBox site</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Check what icon appears next to the page title</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Try bookmarking the page (Ctrl+D)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Look at the bookmark icon in your bookmarks bar</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Compare with other professional websites</div>
+                    </div>
+                </div>
+
+                <div class="expected-result">
+                    <strong>🔍 What you should find:</strong> Generic/empty icon instead of custom MusicBox favicon
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Testing Tips -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">💡</div>
+                <h2>Testing Tips by Mateusz</h2>
+                
+                <div class="testing-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Always test the "happy path" first (normal user behavior)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Then test edge cases and error scenarios</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Test on multiple devices and browsers</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Document steps to reproduce each bug</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Include screenshots/videos when reporting bugs</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-text">Prioritize bugs by impact on user experience</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">7</div>
+                        <div class="step-text">Verify fixes don't break other functionality</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">8</div>
+                        <div class="step-text">Test both positive and negative scenarios</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Summary -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="category-icon">🎯</div>
+                <h2>Ready to Start Testing!</h2>
+                
+                <div style="text-align: left; font-size: 1.3em; line-height: 1.8;">
+                    <p><strong>✅ You now know how to test:</strong></p>
+                    <p>• 4 Responsiveness issues</p>
+                    <p>• 2 Button/Form problems</p>
+                    <p>• 1 Audio bug</p>
+                    <p>• 2 Image issues</p>
+                    <p>• 2 Accessibility problems</p>
+                    <p>• 1 Search functionality bug</p>
+                    <p>• 2 Email validation issues</p>
+                    <p>• 4 Modal closing problems</p>
+                    <p>• 1 Form submission bug</p>
+                    <p>• 1 Missing favicon</p>
+                </div>
+
+                <h3 style="margin-top: 40px; color: #ffd700;">
+                    Good luck finding all 18 bugs! 🕵️‍♀️
+                </h3>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = index + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentSlideIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                currentSlideIndex = newIndex;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                changeSlide(1);
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
